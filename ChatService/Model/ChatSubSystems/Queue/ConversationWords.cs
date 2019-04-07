@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Queue.QueueApp {
+namespace ChatService.Model.ChatSubSystems.Queue {
 	/// <summary>
 	/// TODO CONVERTIR A JSON
 	/// </summary>
@@ -16,6 +16,7 @@ namespace Queue.QueueApp {
 		#region errorMessages 
 		public static List<string> emptyServicePhrases = new List<string> {"Has escrito mal el nombre del recurso", "Tal vez deberías pedir algo..", "No puedes dejar el recurso vacío!"};
 		public static List<string> authorizationErrors = new List<string> {"No puedes liberar lo que no posees!", "Chsss ese recurso no es tuyo actualmente", "Solo puedes liberar recursos que sean tuyos.."};
+		public static string errorParsingMessage = "Error al procesar texto";
 		#endregion
 
 		#region actionMessages

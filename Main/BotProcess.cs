@@ -2,33 +2,14 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
-using Microsoft.Teams.Samples.HelloWorld.Web.Controllers.QueueApp;
-using Queue.QueueApp;
+using MSJLBot.ChatService.Control.ChatManagement;
 
-namespace Queue {
-
-	public enum ActionType {
-
-		RequestService,
-		AskForServiceState,
-		FreeService,
-		NoAction
-
-	}
-
-	public struct ActionService {
-
-		public ActionType actionType;
-		public string serviceName;
-
-	}
+namespace MSJLBot {
 
 	/// <summary>
 	///     Represents a bot that processes incoming activities.
@@ -41,9 +22,9 @@ namespace Queue {
 	///     <see cref="IStatePropertyAccessor{T}" /> object are created with a singleton lifetime.
 	/// </summary>
 	/// <seealso cref="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-2.1" />
-	public class QueueBot : IBot {
+	public class BotProcess : IBot {
 
-		private readonly QueueAccessors _accessors;
+		private readonly ChatBotAccessors _accessors;
 		private readonly ILogger _logger;
 
 		/// <summary>
@@ -53,11 +34,11 @@ namespace Queue {
 		/// <param name="loggerFactory">A <see cref="ILoggerFactory" /> that is hooked to the Azure App Service provider.</param>
 		/// <seealso
 		///     cref="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-2.1#windows-eventlog-provider" />
-		public QueueBot(QueueAccessors accessors, ILoggerFactory loggerFactory) {
+		public BotProcess(ChatBotAccessors accessors, ILoggerFactory loggerFactory) {
 			if (loggerFactory == null) {
 				throw new ArgumentNullException(nameof(loggerFactory));
 			}
-			_logger = loggerFactory.CreateLogger<QueueBot>();
+			_logger = loggerFactory.CreateLogger<BotProcess>();
 			_logger.LogTrace("Turn start.");
 			_accessors = accessors ?? throw new ArgumentNullException(nameof(accessors));
 		}
@@ -86,71 +67,10 @@ namespace Queue {
 			if (turnContext.Activity.Type == ActivityTypes.Message) {
 				// Get the conversation state from the turn context.
 				CounterState state = await _accessors.CounterState.GetAsync(turnContext, () => new CounterState());
-				ProcessText(turnContext);
+				ChatFacade.ProcessText(turnContext);
 			}
 		}
 
-		private async void ProcessText(ITurnContext turnContext) {
-			try {
-				List<string> texts = turnContext.Activity.Text.Split(' ').ToList();
-				ActionService actionService = GetActionService(texts);
-				ProcessAction(actionService, turnContext);
-			}
-			catch (Exception e) {
-				await turnContext.SendActivityAsync($"Error al procesar texto");
-			}
-		}
-
-		private ActionService GetActionService(List<string> texts) {
-			ActionService actionService = new ActionService();
-			foreach (string t in texts) {
-				if (ConversationWords.requestWords.Contains(t)) {
-					actionService.actionType = ActionType.RequestService;
-				}else if (ConversationWords.freeWords.Contains(t)) {
-					actionService.actionType = ActionType.FreeService;
-				}
-				else if (ConversationWords.askForServiceStateWords.Contains(t)) {
-					actionService.actionType = ActionType.AskForServiceState;
-				}
-				int requestIndex = texts.IndexOf(t);
-				actionService.serviceName = texts[requestIndex + 1];
-				return actionService;
-			}
-			actionService.actionType = ActionType.NoAction;
-			return actionService;
-		}
-		
-		
-		private async void ProcessAction(ActionService actionService, ITurnContext turnContext) {
-			switch (actionService.actionType) {
-				case ActionType.NoAction:
-					await turnContext.SendActivityAsync($"Error al procesar texto");
-					return;
-				case ActionType.RequestService:
-					RequestService(actionService, turnContext);
-					break;
-				case ActionType.AskForServiceState:
-					AskForServiceState(actionService, turnContext);
-					break;
-				case ActionType.FreeService:
-					FreeService(actionService, turnContext);
-					break;
-				default:
-					break;
-			}
-		}
-
-		private void RequestService(ActionService actionService, ITurnContext turnContext) {
-			QueueManager.RequestService(turnContext, turnContext.Activity.From.Name, actionService.serviceName);
-		}
-
-		private void FreeService(ActionService actionService, ITurnContext turnContext) {
-			QueueManager.SetServiceFree(turnContext, turnContext.Activity.From.Name, actionService.serviceName);
-		}
-
-		private void AskForServiceState(ActionService actionService, ITurnContext turnContext) {
-			QueueManager.AskForServiceState(turnContext, turnContext.Activity.From.Name, actionService.serviceName);
-		}
 	}
 
 }

@@ -14,8 +14,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MSJLBot.ChatService.Control.ChatManagement;
+using MSJLBot.ChatService.Control.ChatSubSystems.Queue;
 
-namespace Queue {
+namespace MSJLBot {
 	/// <summary>
 	/// The Startup class configures services and the request pipeline.
 	/// </summary>
@@ -32,6 +34,7 @@ namespace Queue {
 				.AddEnvironmentVariables();
 
 			Configuration = builder.Build();
+			ChatFacade.AddChatService(new QueueServiceManager());
 		}
 
 		/// <summary>
@@ -50,12 +53,12 @@ namespace Queue {
 		/// <seealso cref="https://docs.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection"/>
 		/// <seealso cref="https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-channels?view=azure-bot-service-4.0"/>
 		public void ConfigureServices(IServiceCollection services) {
-			services.AddBot<QueueBot>(options => {
+			services.AddBot<BotProcess>(options => {
 				var secretKey = Configuration.GetSection("botFileSecret")?.Value;
 				var botFilePath = Configuration.GetSection("botFilePath")?.Value;
-
+				
 				// Loads .bot configuration file and adds a singleton that your Bot can access through dependency injection.
-				var botConfig = BotConfiguration.Load(botFilePath ?? @".\Queue.bot", secretKey);
+				BotConfiguration botConfig = BotConfiguration.Load(botFilePath ?? @".\Queue.bot", secretKey);
 				services.AddSingleton(sp => botConfig ?? throw new InvalidOperationException($"The .bot config file could not be loaded. ({botConfig})"));
 
 				// Retrieve current endpoint.
@@ -68,7 +71,7 @@ namespace Queue {
 				options.CredentialProvider = new SimpleCredentialProvider(endpointService.AppId, endpointService.AppPassword);
 
 				// Creates a logger for the application to use.
-				ILogger logger = _loggerFactory.CreateLogger<QueueBot>();
+				ILogger logger = _loggerFactory.CreateLogger<BotProcess>();
 
 				// Catches any errors that occur during a conversation turn and logs them.
 				options.OnTurnError = async (context, exception) => {
@@ -107,7 +110,7 @@ namespace Queue {
 
 			// Create and register state accessors.
 			// Accessors created here are passed into the IBot-derived class on every turn.
-			services.AddSingleton<QueueAccessors>(sp => {
+			services.AddSingleton<ChatBotAccessors>(sp => {
 				var options = sp.GetRequiredService<IOptions<BotFrameworkOptions>>().Value;
 				if (options == null) {
 					throw new InvalidOperationException("BotFrameworkOptions must be configured prior to setting up the state accessors");
@@ -120,8 +123,8 @@ namespace Queue {
 
 				// Create the custom state accessor.
 				// State accessors enable other components to read and write individual properties of state.
-				var accessors = new QueueAccessors(conversationState) {
-					CounterState = conversationState.CreateProperty<CounterState>(QueueAccessors.CounterStateName),
+				var accessors = new ChatBotAccessors(conversationState) {
+					CounterState = conversationState.CreateProperty<CounterState>(ChatBotAccessors.CounterStateName),
 				};
 
 				return accessors;

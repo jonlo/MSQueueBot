@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Queue.QueueApp.Model {
+namespace ChatService.Model.ChatSubSystems.Queuel {
 
 	public class QueuedService {
 
@@ -18,28 +17,25 @@ namespace Queue.QueueApp.Model {
 		}
 
 		public void SetNextOwner() {
-			try {
-				CurrentOwner = requesters[0];
-			}
-			catch (Exception e) {
-				Console.WriteLine(e);
-			}
+			CurrentOwner = requesters.Any() ? requesters[0] : "";
 		}
 
 		public bool IsCurrentOwner(string userId) {
 			return CurrentOwner == userId;
 		}
 
-		public void PushUser(string userId) {
+		public void PushRequester(string userId) {
 			requesters.Add(userId);
 		}
 
-		public void PopUser() {
-			requesters.RemoveAt(0);
+		public void PopRequester() {
+			if (requesters.Any()) {
+				requesters.RemoveAt(0);
+			}
 		}
 
 		public bool IsAnyUserWaiting() {
-			return requesters.Any();
+			return !string.IsNullOrEmpty(CurrentOwner) || requesters.Any();
 		}
 
 		public bool IsUserWaiting(string userId) {

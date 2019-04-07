@@ -5,7 +5,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Queue {
+namespace MSJLBot {
 	public class Program {
 		public static void Main(string[] args) {
 			BuildWebHost(args).Run();
