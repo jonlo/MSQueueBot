@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ChatService.Model.ChatSubSystems.Queuel {
+namespace MSJLBot.ChatService.Model.ChatSubSystems.Queue {
 
 	public class QueuedService {
 
@@ -25,7 +25,9 @@ namespace ChatService.Model.ChatSubSystems.Queuel {
 		}
 
 		public void PushRequester(string userId) {
-			requesters.Add(userId);
+			if (!string.IsNullOrEmpty(CurrentOwner)) {
+				requesters.Add(userId);
+			}
 		}
 
 		public void PopRequester() {
@@ -44,6 +46,23 @@ namespace ChatService.Model.ChatSubSystems.Queuel {
 
 		public string RequestersToString() {
 			return requesters.Aggregate("", (current, requester) => current + requester + " ");
+		}
+
+		public string GetCurrentState() {
+			string answer;
+			if (!IsAnyUserWaiting()) {
+				answer = $"Actualmente el recurso {Id} está libre.";
+			}
+			else {
+				answer = $"Actualmente el recurso {Id} está reservado por {CurrentOwner}.";
+			}
+			if (string.IsNullOrEmpty(RequestersToString())) {
+				answer += $"Y no hay lista de espera.";
+			}
+			else {
+				answer += $"Y están a la epera estas personas: {RequestersToString()}.";
+			}
+			return answer;
 		}
 
 	}

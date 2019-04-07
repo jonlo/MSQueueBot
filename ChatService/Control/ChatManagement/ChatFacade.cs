@@ -21,7 +21,7 @@ namespace MSJLBot.ChatService.Control.ChatManagement {
 			}
 		}
 
-		public static async void ProcessText(ITurnContext turnContext) {
+		public static void ProcessText(ITurnContext turnContext) {
 			foreach (IChatService chatService in chatServices) {
 				chatService.ProcessMessage(turnContext);
 			}

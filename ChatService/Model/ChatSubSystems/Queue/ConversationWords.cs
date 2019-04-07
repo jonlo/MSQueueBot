@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ChatService.Model.ChatSubSystems.Queue {
+namespace MSJLBot.ChatService.Model.ChatSubSystems.Queue {
 	/// <summary>
 	/// TODO CONVERTIR A JSON
 	/// </summary>
 	public static class ConversationWords {
 
 		#region Actions
-		public static List<string> requestWords = new List<string>{"pido","reservo","pillo","reservar","perdir","pillar"};
+		public static List<string> requestWords = new List<string>{"pido","reservo","pillo","reservar","pedir","pillar"};
 		public static List<string> freeWords = new List<string> {"libero", "suelto", "dejo", "agur"};
 		public static List<string> askForServiceStateWords = new List<string> {"ver", "mostrar", "estado"};
 		#endregion

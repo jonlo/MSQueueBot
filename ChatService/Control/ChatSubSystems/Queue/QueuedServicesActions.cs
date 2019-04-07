@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ChatService.Model.ChatSubSystems.Queue;
+using MSJLBot.ChatService.Model.ChatSubSystems.Queue;
 
 namespace MSJLBot.ChatService.Control.ChatSubSystems.Queue {
 
@@ -19,7 +19,7 @@ namespace MSJLBot.ChatService.Control.ChatSubSystems.Queue {
 
 	}
 
-	public static class QueuePossibleActionServices {
+	public static class QueuedServicesActions {
 
 		public static ActionService GetActionService(List<string> texts) {
 			ActionService actionService = new ActionService();

@@ -4,7 +4,7 @@
     {
         "type": "endpoint",
         "name": "development",
-        "endpoint": "http://54659bbd.ngrok.io/api/messages",
+        "endpoint": "http://localhost:3978/api/messages",
         "appId": "",
         "appPassword": "",
         "id": "1"
