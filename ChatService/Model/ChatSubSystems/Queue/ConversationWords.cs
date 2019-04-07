@@ -14,9 +14,9 @@ namespace MSJLBot.ChatService.Model.ChatSubSystems.Queue {
 		#endregion
 
 		#region errorMessages 
-		public static List<string> emptyServicePhrases = new List<string> {"Has escrito mal el nombre del recurso", "Tal vez deberías pedir algo..", "No puedes dejar el recurso vacío!"};
+		public static List<string> emptyServicePhrases = new List<string> {"Parece que ese recurso no está en ninguna cola"};
 		public static List<string> authorizationErrors = new List<string> {"No puedes liberar lo que no posees!", "Chsss ese recurso no es tuyo actualmente", "Solo puedes liberar recursos que sean tuyos.."};
-		public static string errorParsingMessage = "Error al procesar texto";
+		public static string errorParsingMessage = "Lo siento, solo entiendo de peticiones sobre recursos :(";
 		#endregion
 
 		#region actionMessages

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace MSJLBot.ChatService.Model.ChatSubSystems.Queue {
 
-	public class QueuedService {
+	public class QueuedItem {
 
 		private readonly List<string> requesters = new List<string>();
 
@@ -11,7 +11,7 @@ namespace MSJLBot.ChatService.Model.ChatSubSystems.Queue {
 
 		public string Id { get; private set; }
 
-		public QueuedService(string id, string currentOwner) {
+		public QueuedItem(string id, string currentOwner) {
 			Id = id;
 			CurrentOwner = currentOwner;
 		}

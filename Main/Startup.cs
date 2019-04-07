@@ -34,7 +34,7 @@ namespace MSJLBot {
 				.AddEnvironmentVariables();
 
 			Configuration = builder.Build();
-			ChatFacade.AddChatService(new QueueServiceManager());
+			ChatFacade.AddChatService(new QueuedItemsManager());
 		}
 
 		/// <summary>
