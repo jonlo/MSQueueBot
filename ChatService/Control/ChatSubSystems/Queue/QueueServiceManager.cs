@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Bot.Builder;
 using MSJLBot.ChatService.Control.ChatManagement;
@@ -15,13 +16,13 @@ namespace MSJLBot.ChatService.Control.ChatSubSystems.Queue {
 		public event ChatServiceHandler OperationFinished;
 
 		void IChatService.ProcessMessage(ITurnContext turnContext) {
-			//	try {
-			List<string> texts = turnContext.Activity.Text.Split(' ').ToList();
-			ProcessAction(QueuedServicesActions.GetActionService(texts), turnContext);
-			//	}
-			//	catch (Exception e) {
-			//	OperationFinished?.Invoke(turnContext, ConversationWords.errorParsingMessage);
-			//	}
+			try {
+				List<string> texts = turnContext.Activity.Text.Split(' ').ToList();
+				ProcessAction(QueuedServicesActions.GetActionService(texts), turnContext);
+			}
+			catch (Exception e) {
+				OperationFinished?.Invoke(turnContext, ConversationWords.errorParsingMessage);
+			}
 		}
 
 		private void ProcessAction(ActionService actionService, ITurnContext turnContext) {
@@ -53,7 +54,7 @@ namespace MSJLBot.ChatService.Control.ChatSubSystems.Queue {
 				return;
 			}
 			QueuedService service = GetQueuedService(actionService.serviceName);
-			if (service != null && service.IsAnyUserWaiting()) {
+			if (service != null) {
 				AddUserToServiceQueue(turnContext.Activity.From.Name, service, turnContext);
 			}
 			else {

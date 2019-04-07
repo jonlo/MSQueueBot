@@ -37,7 +37,7 @@ namespace MSJLBot.ChatService.Model.ChatSubSystems.Queue {
 		}
 
 		public bool IsAnyUserWaiting() {
-			return !string.IsNullOrEmpty(CurrentOwner) || requesters.Any();
+			return requesters.Any();
 		}
 
 		public bool IsUserWaiting(string userId) {
